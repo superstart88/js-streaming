@@ -1,14 +1,20 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
+
+const { mongoUri } = require("./api/consts");
 
 require("dotenv").config();
 
 const middlewares = require("./middlewares");
 const api = require("./api");
+const authRoutes = require("./api/auth");
 
 const app = express();
+
+mongoose.connect(mongoUri);
 
 app.use(morgan("dev"));
 app.use(helmet());
@@ -22,6 +28,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/defy", api);
+
+app.use("/auth", authRoutes);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
